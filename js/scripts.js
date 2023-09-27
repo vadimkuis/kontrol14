@@ -29,12 +29,14 @@ window.onload = function () {
     }
 
     //Реализовать проверку введенного E-mail на корректность
-    const email = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
+    const emailRegex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
 
     emailInput.oninput = function () {
-        this.value = this.value.replace(email, '');
-    }
+        if (!emailRegex.test(this.value)) {
 
+        } else {
+        }
+    }
 
 
     // выводим изменение значения чекбокса
@@ -42,14 +44,17 @@ window.onload = function () {
         checkboxInput.checked ? console.log('Cогласен') : console.log('Не согласен');
     }
 
-    
+
     // проверяем заполнение полей
     for (let i = 0; i < inputs.length; i++) {
         inputs[i].onchange = function () {
             this.previousElementSibling.removeAttribute('style');
         }
     }
-    signUpButton.onclick = function (ev) {
+    form.onsubmit = onRegsiter;
+    switchLink.onclick = changeLocation;
+
+    function onRegsiter(ev) {
         ev.preventDefault();
 
         let formIsValid = true;
@@ -72,6 +77,35 @@ window.onload = function () {
             alert('Пароль должен быть не менее 8 символов');
             return false;
         }
+        //Поле пароля должно содержать минимум 8 символов, среди которых есть:
+        //- хотя бы одна буква в верхнем регистре
+        const passwordRegex1 = /[A-Z]/;
+        //- хотя бы одна цифра
+        const passwordRegex2 = /[0-9]/;
+        //- хотя бы один спецсимвол
+        const passwordRegex3 = /[.,^:;'"@#$%&*()=!?<>/~`]/;
+
+        passwordInput.oninput = function () {
+            if (!passwordRegex1.test(this.value)) {
+            } else {
+                alert("Пароль должен содержать хотя бы одну букву в верхнем регистре!")
+                return false;
+            }
+        }
+        passwordInput.oninput = function () {
+            if (!passwordRegex2.test(this.value)) {
+            } else {
+                alert("Пароль должен содержать хотя бы одну цифру!")
+                return false;
+            }
+        }
+        passwordInput.oninput = function () {
+            if (!passwordRegex3.test(this.value)) {
+            } else {
+                alert("Пароль должен содержать хотя бы один спецсимвол!")
+                return false;
+            }
+        }
         if (!repeatPasswordInput.value) {
             alert('Подтвердите пароль');
             return false;
@@ -86,13 +120,9 @@ window.onload = function () {
         }
         return true;
     }
-    //Поле пароля должно содержать минимум 8 символов, среди которых есть:
-    //- хотя бы одна буква в верхнем регистре
-    //- хотя бы одна цифра
-    //- хотя бы один спецсимвол
 
     buttonOk.onclick = changeLocation;
-    switchLink.onclick = changeLocation;
+
 
     function changeLocation() {
         modal.removeAttribute('style');
@@ -114,7 +144,9 @@ window.onload = function () {
         switchLink.remove(); // удаляем ссылку
 
         // Добавляем обработчик события для кнопки Sign In
-        signUpButton.onclick = function (event) {
+        signUpButton.onclick = onLogin;
+
+        function onLogin(event) {
             event.preventDefault();
             let username = userNameInput.value.trim();
             let password = passwordInput.value.trim();
