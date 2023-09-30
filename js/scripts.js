@@ -85,26 +85,22 @@ window.onload = function () {
         //- хотя бы один спецсимвол
         const passwordRegex3 = /[.,^:;'"@#$%&*()=!?<>/~`]/;
 
-        passwordInput.oninput = function () {
-            if (!passwordRegex1.test(this.value)) {
-            } else {
-                alert("Пароль должен содержать хотя бы одну букву в верхнем регистре!")
-                return false;
-            }
+        if (passwordRegex1.test(passwordInput.value)) {
+
+        } else {
+            alert("Пароль должен содержать хотя бы одну букву в верхнем регистре!")
+            return false;
         }
-        passwordInput.oninput = function () {
-            if (!passwordRegex2.test(this.value)) {
-            } else {
-                alert("Пароль должен содержать хотя бы одну цифру!")
-                return false;
-            }
+        if (passwordRegex2.test(passwordInput.value)) {
+        } else {
+            alert("Пароль должен содержать хотя бы одну цифру!")
+            return false;
         }
-        passwordInput.oninput = function () {
-            if (!passwordRegex3.test(this.value)) {
-            } else {
-                alert("Пароль должен содержать хотя бы один спецсимвол!")
-                return false;
-            }
+        if (passwordRegex3.test(passwordInput.value)) {
+
+        }else{
+            alert("Пароль должен содержать хотя бы один спецсимвол!")
+            return false;
         }
         if (!repeatPasswordInput.value) {
             alert('Подтвердите пароль');
