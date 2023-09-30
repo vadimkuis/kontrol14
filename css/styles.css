@@ -13,25 +13,30 @@ body {
     font-family: Nunito, sans-serif;
     background: linear-gradient(to left, #F8F8FA 53%, #FFFFFF 47%);
 }
+
 .container {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
     height: 1185px;
 }
-.home__logos{
-   position: absolute;
+
+.home__logos {
+    position: absolute;
 }
-.home__logo{
+
+.home__logo {
     margin-top: 27px;
     position: relative;
     left: 412px;
 }
-.home__title h1{
+
+.home__title h1 {
     margin-top: 167px;
     font-size: 27px;
     color: #000000;
 }
+
 .home__text {
     margin-top: 7px;
     font-size: 22px;
@@ -39,19 +44,22 @@ body {
     width: 496px;
     margin-right: 44px;
 }
-.home__form{
+
+.home__form {
     margin-top: 42px;
     max-width: 95%;
     display: flex;
     flex-flow: column wrap;
 }
-.home__form-title{
+
+.home__form-title {
     font-size: 16px;
     line-height: 27px;
     color: #C6C6C4;
     margin-top: 20px;
 }
-.home__form-input{
+
+.home__form-input {
     border: none;
     border-bottom: 1px solid #C6C6C4;
     background-color: transparent;
@@ -62,20 +70,24 @@ body {
     width: 496px;
     box-sizing: border-box;
 }
-.home__form-agree{
+
+.home__form-agree {
     display: block;
     font-size: 16px;
     color: #636363;
 }
-.home__form-checkbox{
+
+.home__form-checkbox {
     margin-top: 30px;
     margin-right: 10px;
 }
-.home__actions{
+
+.home__actions {
     display: flex;
     justify-content: center;
 }
-.home__form-btn{
+
+.home__form-btn {
     padding: 21px 68px 25px 68px;
     margin-top: 61px;
     margin-right: 100px;
@@ -86,21 +98,25 @@ body {
     font-size: 20px;
     color: #FFFFFF;
 }
-.home__alredy{
+
+.home__alredy {
     display: flex;
     justify-content: center;
     margin-right: 100px;
     margin-top: 44px;
 }
-.home__alredy a{
+
+.home__alredy a {
     text-decoration: none;
     font-size: 16px;
     color: #636363;
 }
-.home__images img{
+
+.home__images img {
     margin-top: 254px;
     margin-left: 56px;
 }
+
 .rocket img {
     margin-top: 254px;
     margin-left: 56px;
@@ -139,4 +155,22 @@ body {
     color: #FFFFFF;
     border: none;
     cursor: pointer;
+}
+
+.error__password {
+    display: none;
+}
+
+.error__repeat-password {
+    display: none;
+}
+
+.error__checkbox {
+    display: none;
+}
+
+.error__password,
+.error__repeat-password,
+.error__checkbox {
+    color: red;
 }

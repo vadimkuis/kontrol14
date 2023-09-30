@@ -14,6 +14,11 @@ window.onload = function () {
     const form = document.getElementById('add__form');
 
 
+    const errorPassword = document.getElementById('error__password');
+    const errorRepeatPassword = document.getElementById('error__repeat-password');
+    const errorCheckbox = document.getElementById('error__checkbox');
+
+
     // Full Name может содержать только буквы и пробел
     const fullName = /[.,^:;'"@#$%&*()=!?<>/~`0-9+]/;
 
@@ -70,6 +75,13 @@ window.onload = function () {
         if (formIsValid && additionalChecks()) {
             modal.setAttribute('style', 'display: block');
         }
+        let person = {
+            fullName: fullNameInput.textContent,
+            userName: userNameInput.innerText,
+            email: emailInput.innerText,
+            password: passwordInput.innerText
+        };
+        console.log(person);
     };
 
     function additionalChecks() {
@@ -88,18 +100,18 @@ window.onload = function () {
         if (passwordRegex1.test(passwordInput.value)) {
 
         } else {
-            alert("Пароль должен содержать хотя бы одну букву в верхнем регистре!")
+            errorPassword.setAttribute('style', 'display: block');
             return false;
         }
         if (passwordRegex2.test(passwordInput.value)) {
         } else {
-            alert("Пароль должен содержать хотя бы одну цифру!")
+            errorPassword.setAttribute('style', 'display: block');
             return false;
         }
         if (passwordRegex3.test(passwordInput.value)) {
 
-        }else{
-            alert("Пароль должен содержать хотя бы один спецсимвол!")
+        } else {
+            errorPassword.setAttribute('style', 'display: block');
             return false;
         }
         if (!repeatPasswordInput.value) {
@@ -107,11 +119,11 @@ window.onload = function () {
             return false;
         }
         if (passwordInput.value !== repeatPasswordInput.value) {
-            alert('Пароли не совпадают');
+            errorRepeatPassword.setAttribute('style', 'display: block');
             return false;
         }
         if (!checkboxInput.checked) {
-            alert("Необходимо согласие на обработку данных");
+            errorCheckbox.setAttribute('style', 'display: block');
             return false;
         }
         return true;

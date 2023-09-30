@@ -27,34 +27,37 @@
 
             <form class="form" id="add__form" action="/">
                 <label>
-                <p class="home__form-title">Full Name</p>
-                <input type="text" class="home__form-input" id="full-name" data-rule="input-check">
+                    <p class="home__form-title">Full Name</p>
+                    <input type="text" class="home__form-input" id="full-name" data-rule="input-check">
                 </label>
 
                 <label>
-                <p class="home__form-title">Your username</p>
-                <input type="text" class="home__form-input" id="your-username" data-rule="input-check">
+                    <p class="home__form-title">Your username</p>
+                    <input type="text" class="home__form-input" id="your-username" data-rule="input-check">
                 </label>
 
                 <label>
-                <p class="home__form-title">E-mail</p>
-                <input type="email" class="home__form-input" data-rule="input-check" id="email">
+                    <p class="home__form-title">E-mail</p>
+                    <input type="email" class="home__form-input" data-rule="input-check" id="email">
                 </label>
 
                 <label>
-                <p class="home__form-title">Password</p>
-                <input type="password" class="home__form-input" id="password" data-rule="input-check">
+                    <p class="home__form-title">Password</p>
+                    <input type="password" class="home__form-input" id="password" data-rule="input-check">
+                    <br><span class="error__password" id="error__password">Поле может содержать минимум 8 символов, <br> среди которых есть хотя бы одна цифра, <br> буква в верхнем регистре, один спецсимвол</span>
                 </label>
 
                 <label>
-                <p class="home__form-title">Repeat Password</p>
-                <input type="password" class="home__form-input" id="repeat-password" data-rule="input-check">
+                    <p class="home__form-title">Repeat Password</p>
+                    <input type="password" class="home__form-input" id="repeat-password" data-rule="input-check">
+                    <span class="error__repeat-password" id="error__repeat-password">Подтвердите пароль</span>
                 </label>
 
                 <label class="home__form-agree">
                     <input type="checkbox" class="home__form-checkbox" id="checkbox" data-rule="input-check">Agree to
                     our Terms of
                     Service and Privacy Statement
+                    <br><span class="error__checkbox" id="error__checkbox">Необходимо согласие на обработку данных</span>
                 </label>
                 <div class="home__actions">
                     <button class="home__form-btn" id="btn" type="submit">Sign Up</button>
