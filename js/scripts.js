@@ -64,6 +64,7 @@ window.onload = function () {
 
         let formIsValid = true;
 
+
         for (let i = 0; i < inputs.length; i++) {
 
             if (!inputs[i].value && formIsValid) {
@@ -74,14 +75,19 @@ window.onload = function () {
         }
         if (formIsValid && additionalChecks()) {
             modal.setAttribute('style', 'display: block');
+            errorPassword.setAttribute('style', 'display: none');
         }
         let person = {
-            fullName: fullNameInput.textContent,
-            userName: userNameInput.innerText,
-            email: emailInput.innerText,
-            password: passwordInput.innerText
+            fullName: fullNameInput.value,
+            userName: userNameInput.value,
+            email: emailInput.value,
+            password: passwordInput.value
         };
-        console.log(person);
+        const clients = [localStorage.getItem('clients')] || [];
+        clients.push(person);
+        localStorage.setItem('clients', clients);
+
+        console.log(clients);
     };
 
     function additionalChecks() {
@@ -153,18 +159,18 @@ window.onload = function () {
 
         // Добавляем обработчик события для кнопки Sign In
         signUpButton.onclick = onLogin;
+    }
 
-        function onLogin(event) {
-            event.preventDefault();
-            let username = userNameInput.value.trim();
-            let password = passwordInput.value.trim();
+    function onLogin(event) {
+        event.preventDefault();
+        let username = userNameInput.value.trim();
+        let password = passwordInput.value.trim();
 
-            // Проверяем заполнены ли оба поля
-            if (!username || !password) {
-                alert('Заполните все поля!');
-            } else {
-                alert(`Добро пожаловать, ${username}!`);
-            }
+        // Проверяем заполнены ли оба поля
+        if (!username || !password) {
+            alert('Заполните все поля!');
+        } else {
+            alert(`Добро пожаловать, ${username}!`);
         }
     }
 }
