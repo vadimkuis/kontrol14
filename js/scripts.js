@@ -18,6 +18,9 @@ window.onload = function () {
     const errorRepeatPassword = document.getElementById('error__repeat-password');
     const errorCheckbox = document.getElementById('error__checkbox');
 
+    const errorUsername = document.getElementById('error__username');
+    const errorPasswordLog = document.getElementById('error__password-log');
+
 
     // Full Name может содержать только буквы и пробел
     const fullName = /[.,^:;'"@#$%&*()=!?<>/~`0-9+]/;
@@ -155,7 +158,12 @@ window.onload = function () {
         checkboxInput.parentElement.remove(); // удаляем блок с чекбоксом
         signUpButton.textContent = 'Sign In'; // изменяем текст кнопки
 
-        switchLink.remove(); // удаляем ссылку
+        switchLink.textContent = 'Registration'; // замена текста
+
+        //Перезагрузка страницы
+        switchLink.addEventListener('click', function () {
+            location.reload();
+        });
 
         // Добавляем обработчик события для кнопки Sign In
         signUpButton.onclick = onLogin;
@@ -163,14 +171,30 @@ window.onload = function () {
 
     function onLogin(event) {
         event.preventDefault();
+        errorUsername.setAttribute('style', 'display: none');
+        errorPasswordLog.setAttribute('style', 'display: none');
+
         let username = userNameInput.value.trim();
         let password = passwordInput.value.trim();
 
-        // Проверяем заполнены ли оба поля
-        if (!username || !password) {
-            alert('Заполните все поля!');
+        const users = clients.filter(user => user.userName === username);
+
+        if (users.length === 0) {
+            alert('Такой пользователь не зарегистрирован');
         } else {
-            alert(`Добро пожаловать, ${username}!`);
+            const user = users.find(user => user.password === password);
+
+            // Проверяем заполнены ли оба поля
+            if (!username) {
+                errorUsername.setAttribute('style', 'display: block');
+            }
+            if (!password) {
+                errorPasswordLog.setAttribute('style', 'display: block');
+            } else {
+                alert(`Добро пожаловать, ${username}!`);
+            }
+
+
         }
     }
 }
