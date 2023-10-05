@@ -21,6 +21,8 @@ window.onload = function () {
     const errorUsername = document.getElementById('error__username');
     const errorPasswordLog = document.getElementById('error__password-log');
 
+    const hometext = document.getElementById('home__text');
+
 
     // Full Name может содержать только буквы и пробел
     const fullName = /[.,^:;'"@#$%&*()=!?<>/~`0-9+]/;
@@ -86,9 +88,9 @@ window.onload = function () {
             email: emailInput.value,
             password: passwordInput.value
         };
-        const clients = [localStorage.getItem('clients')] || [];
+        const clients = JSON.parse(localStorage.getItem('clients')) || [];
         clients.push(person);
-        localStorage.setItem('clients', clients);
+        localStorage.setItem('clients', JSON.stringify(clients));
 
         console.log(clients);
     };
@@ -177,26 +179,44 @@ window.onload = function () {
         let username = userNameInput.value.trim();
         let password = passwordInput.value.trim();
 
+        const clients = JSON.parse(localStorage.getItem('clients')) || [];
         const users = clients.filter(user => user.userName === username);
 
+        // Проверяем заполнены ли оба поля
         if (users.length === 0) {
             alert('Такой пользователь не зарегистрирован');
+        }
+        if (!username) {
+            errorUsername.setAttribute('style', 'display: block');
+        }
+        if (!password) {
+            errorPasswordLog.setAttribute('style', 'display: block');
         } else {
             const user = users.find(user => user.password === password);
-
-            // Проверяем заполнены ли оба поля
-            if (!username) {
-                errorUsername.setAttribute('style', 'display: block');
-            }
-            if (!password) {
-                errorPasswordLog.setAttribute('style', 'display: block');
-            } else {
-                alert(`Добро пожаловать, ${username}!`);
-            }
-
-
+            alert(`Добро пожаловать, ${username}!`);
         }
+        signUpButton.onclick = onAutorization;
+
     }
+
+    function onAutorization() {
+        form.reset();
+        const clients = JSON.parse(localStorage.getItem('clients')) || [];
+        userNameInput.previousElementSibling.remove()
+        userNameInput.remove(); // удаляем блок с полем User Name
+        passwordInput.previousElementSibling.remove()
+        passwordInput.remove(); // удаляем блок с полем Repeat Password
+        switchLink.previousElementSibling.remove()
+        switchLink.remove();
+        hometext.previousElementSibling.remove()
+        hometext.remove();
+        document.querySelector('h1').textContent = `Welcome, ${user.fullName}`; // изменяем текст заголовка
+        signUpButton.textContent = 'Exit'; // изменяем текст кнопки
+    }
+
+    signUpButton.addEventListener('click', function () {
+        location.reload();
+    });
 }
 
 
