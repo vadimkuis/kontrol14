@@ -10,6 +10,7 @@ window.onload = function () {
     const modal = document.getElementById('modal');
     const switchLink = document.getElementById('switchLink');
     const signUpButton = document.getElementById('btn');
+    const autButton = document.getElementById('btn');
     const inputs = document.getElementsByClassName('home__form-input');
     const form = document.getElementById('add__form');
 
@@ -108,6 +109,9 @@ window.onload = function () {
         //- хотя бы один спецсимвол
         const passwordRegex3 = /[.,^:;'"@#$%&*()=!?<>/~`]/;
 
+        errorPassword.setAttribute('style', 'display: none');
+        errorRepeatPassword.setAttribute('style', 'display: none');
+
         if (passwordRegex1.test(passwordInput.value)) {
 
         } else {
@@ -173,6 +177,7 @@ window.onload = function () {
 
     function onLogin(event) {
         event.preventDefault();
+
         errorUsername.setAttribute('style', 'display: none');
         errorPasswordLog.setAttribute('style', 'display: none');
 
@@ -193,30 +198,32 @@ window.onload = function () {
             errorPasswordLog.setAttribute('style', 'display: block');
         } else {
             const user = users.find(user => user.password === password);
-            alert(`Добро пожаловать, ${username}!`);
+            document.querySelector('h1').textContent = `Welcome, ${users.fullName}`; // изменяем текст заголовка
+            switchLink.setAttribute('style', 'display: none');
+            hometext.setAttribute('style', 'display: none');
+            signUpButton.onclick = goToPersonalPage;
         }
-        signUpButton.onclick = onAutorization;
 
     }
-
-    function onAutorization() {
+    function goToPersonalPage(){
         form.reset();
-        const clients = JSON.parse(localStorage.getItem('clients')) || [];
+
+        signUpButton.textContent = 'Exit'; // изменяем текст кнопки
         userNameInput.previousElementSibling.remove()
         userNameInput.remove(); // удаляем блок с полем User Name
         passwordInput.previousElementSibling.remove()
         passwordInput.remove(); // удаляем блок с полем Repeat Password
         switchLink.previousElementSibling.remove()
-        switchLink.remove();
-        hometext.previousElementSibling.remove()
-        hometext.remove();
-        document.querySelector('h1').textContent = `Welcome, ${user.fullName}`; // изменяем текст заголовка
-        signUpButton.textContent = 'Exit'; // изменяем текст кнопки
+
+        signUpButton.onclick = onAutorization;
     }
 
-    signUpButton.addEventListener('click', function () {
-        location.reload();
-    });
+
+    function onAutorization() {
+        signUpButton.addEventListener('click', function () {
+            location.reload();
+        });
+    }
 }
 
 
