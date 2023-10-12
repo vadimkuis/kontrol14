@@ -10,51 +10,35 @@ window.onload = function () {
     const modal = document.getElementById('modal');
     const switchLink = document.getElementById('switchLink');
     const signUpButton = document.getElementById('btn');
-    const autButton = document.getElementById('btn');
     const inputs = document.getElementsByClassName('home__form-input');
     const form = document.getElementById('add__form');
-
-
-    const errorPassword = document.getElementById('error__password');
-    const errorRepeatPassword = document.getElementById('error__repeat-password');
-    const errorCheckbox = document.getElementById('error__checkbox');
-
-    const errorUsername = document.getElementById('error__username');
-    const errorPasswordLog = document.getElementById('error__password-log');
-
-    const hometext = document.getElementById('home__text');
+    const homeText = document.getElementById('home__text');
 
 
     // Full Name может содержать только буквы и пробел
     const fullName = /[.,^:;'"@#$%&*()=!?<>/~`0-9+]/;
-
     fullNameInput.oninput = function () {
         this.value = this.value.replace(fullName, '');
     }
 
     // Your username - может содержать только буквы, цифры, символ подчеркивания и тире
     const userName = /[.,^:;'"@#$%&*()=!?<>/~`+\s]/;
-
     userNameInput.oninput = function () {
         this.value = this.value.replace(userName, '');
     }
 
     //Реализовать проверку введенного E-mail на корректность
     const emailRegex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
-
     emailInput.oninput = function () {
         if (!emailRegex.test(this.value)) {
 
-        } else {
         }
     }
-
 
     // выводим изменение значения чекбокса
     checkboxInput.onclick = () => {
         checkboxInput.checked ? console.log('Cогласен') : console.log('Не согласен');
     }
-
 
     // проверяем заполнение полей
     for (let i = 0; i < inputs.length; i++) {
@@ -62,10 +46,10 @@ window.onload = function () {
             this.previousElementSibling.removeAttribute('style');
         }
     }
-    form.onsubmit = onRegsiter;
+    form.onsubmit = onRegister;
     switchLink.onclick = changeLocation;
 
-    function onRegsiter(ev) {
+    function onRegister(ev) {
         ev.preventDefault();
 
         let formIsValid = true;
@@ -79,26 +63,31 @@ window.onload = function () {
                 formIsValid = false;
             }
         }
+
+        function showError(inputElement, message) {
+            inputElement.style.border = '1px solid red';
+            inputElement.style.marginBottom = '10px';
+            inputElement.nextElementSibling.textContent = message;
+            inputElement.nextElementSibling.style.display = 'block';
+        }
+
         if (formIsValid && additionalChecks()) {
             modal.setAttribute('style', 'display: block');
-            errorPassword.setAttribute('style', 'display: none');
         }
         let person = {
-            fullName: fullNameInput.value,
-            userName: userNameInput.value,
-            email: emailInput.value,
-            password: passwordInput.value
+            fullName: fullNameInput.value.trim(),
+            userName: userNameInput.value.trim(),
+            email: emailInput.value.trim(),
+            password: passwordInput.value.trim()
         };
         const clients = JSON.parse(localStorage.getItem('clients')) || [];
         clients.push(person);
         localStorage.setItem('clients', JSON.stringify(clients));
-
-        console.log(clients);
     };
 
     function additionalChecks() {
         if (passwordInput.value.length < 8) {
-            alert('Пароль должен быть не менее 8 символов');
+            showError(passwordInput, 'Поле может содержать минимум 8 символов');
             return false;
         }
         //Поле пароля должно содержать минимум 8 символов, среди которых есть:
@@ -150,33 +139,28 @@ window.onload = function () {
     function changeLocation() {
         modal.removeAttribute('style');
         form.reset();
-        document.querySelector('h1').textContent = 'Log in to the system'; // изменяем текст заголовка
 
+        document.querySelector('h1').textContent = 'Log in to the system'; // изменяем текст заголовка
         fullNameInput.previousElementSibling.remove();
         fullNameInput.remove(); // удаляем блок с полем Full Name
-
         emailInput.previousElementSibling.remove();
         emailInput.remove(); // удаляем блок с полем E-mail
-
-        repeatPasswordInput.previousElementSibling.remove()
+        repeatPasswordInput.previousElementSibling.remove();
         repeatPasswordInput.remove(); // удаляем блок с полем Repeat Password
-
         checkboxInput.parentElement.remove(); // удаляем блок с чекбоксом
         signUpButton.textContent = 'Sign In'; // изменяем текст кнопки
-
         switchLink.textContent = 'Registration'; // замена текста
 
         //Перезагрузка страницы
-        switchLink.addEventListener('click', function () {
-            location.reload();
-        });
+        switchLink.onclick = location.reload;
 
         // Добавляем обработчик события для кнопки Sign In
-        signUpButton.onclick = onLogin;
+        form.onsubmit = onLogin;
     }
 
     function onLogin(event) {
         event.preventDefault();
+        form.reset();
 
         errorUsername.setAttribute('style', 'display: none');
         errorPasswordLog.setAttribute('style', 'display: none');
@@ -184,46 +168,52 @@ window.onload = function () {
         let username = userNameInput.value.trim();
         let password = passwordInput.value.trim();
 
-        const clients = JSON.parse(localStorage.getItem('clients')) || [];
-        const users = clients.filter(user => user.userName === username);
-
         // Проверяем заполнены ли оба поля
-        if (users.length === 0) {
-            alert('Такой пользователь не зарегистрирован');
-        }
         if (!username) {
             errorUsername.setAttribute('style', 'display: block');
         }
         if (!password) {
             errorPasswordLog.setAttribute('style', 'display: block');
-        } else {
-            const user = users.find(user => user.password === password);
-            document.querySelector('h1').textContent = `Welcome, ${users.fullName}`; // изменяем текст заголовка
-            switchLink.setAttribute('style', 'display: none');
-            hometext.setAttribute('style', 'display: none');
-            signUpButton.onclick = goToPersonalPage;
         }
 
-    }
-    function goToPersonalPage(){
-        form.reset();
+        if (username && password) {
+            const user = clients.find(person => person.userName === username);
+            if (user.length === 0) {
+                alert('Такой пользователь не зарегистрирован!');
+            } else {
+                const user = person.find(person => person.password === password);
+                if (!user) {
+                    alert('Неверный пароль!');
+                } else {
+                    form.onsubmit = goToPersonalPage;
+                }
+            }
 
-        signUpButton.textContent = 'Exit'; // изменяем текст кнопки
-        userNameInput.previousElementSibling.remove()
-        userNameInput.remove(); // удаляем блок с полем User Name
-        passwordInput.previousElementSibling.remove()
-        passwordInput.remove(); // удаляем блок с полем Repeat Password
-        switchLink.previousElementSibling.remove()
+        }
 
-        signUpButton.onclick = onAutorization;
-    }
+        function goToPersonalPage() {
+            form.reset();
+
+            document.querySelector('h1').textContent = `Welcome, ${user.fullName}`; // изменяем текст заголовка
+            signUpButton.textContent = 'Exit'; // изменяем текст кнопки
+            userNameInput.previousElementSibling.remove()
+            userNameInput.remove(); // удаляем блок с полем User Name
+            passwordInput.previousElementSibling.remove()
+            passwordInput.remove(); // удаляем блок с полем Repeat Password
+            switchLink.previousElementSibling.remove()
+            switchLink.remove();
+            homeText.previousElementSibling.remove()
+            homeText.remove();
+
+            form.onsubmit = onAutorization;
+        }
 
 
-    function onAutorization() {
-        signUpButton.addEventListener('click', function () {
+        function onAutorization() {
             location.reload();
-        });
-    }
+        }
+
+    };
 }
 
 
