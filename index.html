@@ -29,37 +29,45 @@
                 <label>
                     <p class="home__form-title">Full Name</p>
                     <input type="text" class="home__form-input" id="full-name" data-rule="input-check">
+                    <div class="d-none">Full name may contain only letters and space</div>
                 </label>
 
                 <label>
                     <p class="home__form-title">Your username</p>
                     <input type="text" class="home__form-input" id="your-username" data-rule="input-check">
-                    <br><span class="error__username" id="error__username">Заполните поле username!</span>
+                    <div class="d-none">Username may contain only letters, numbers, underscore and dash</div>
                 </label>
+
 
                 <label>
                     <p class="home__form-title">E-mail</p>
                     <input type="email" class="home__form-input" data-rule="input-check" id="email">
+                    <div class="d-none">E-mail must contain</div>
                 </label>
 
                 <label>
                     <p class="home__form-title">Password</p>
                     <input type="password" class="home__form-input" id="password" data-rule="input-check">
+                    <div class="d-none">Password must be not less than 8 symbols and contain at least one capital letter,
+                        number and special symbol</div>
                 </label>
 
                 <label>
                     <p class="home__form-title">Repeat Password</p>
                     <input type="password" class="home__form-input" id="repeat-password" data-rule="input-check">
+                    <div class="d-none">Passwords mismatch</div>
                 </label>
 
                 <label class="home__form-agree">
-                    <input type="checkbox" class="home__form-checkbox" id="checkbox" data-rule="input-check">Agree to
-                    our Terms of
-                    Service and Privacy Statement
+                    <input type="checkbox" class="home__form-checkbox" id="checkbox" data-rule="input-check">
+                    Agree to  our Terms of Service and Privacy Statement
+                    <div class="d-none" id="error-check">You need agree with confidentiality policy</div>
                 </label>
+
                 <div class="home__actions">
-                    <button class="home__form-btn" id="btn" type="submit">Sign Up</button>
+                    <button class="home__form-btn" id="btn" type="button">Sign Up</button>
                 </div>
+
             </form>
             <div class="home__alredy">
                 <a href="#" class="home__form-link" id="switchLink">Already have an account?</a>

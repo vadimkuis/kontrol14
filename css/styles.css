@@ -157,28 +157,12 @@ body {
     cursor: pointer;
 }
 
-.error__password {
-    display: none;
+.d-none {
+    display: none !important;
 }
-
-.error__repeat-password {
-    display: none;
-}
-
-.error__checkbox {
-    display: none;
-}
-.error__username{
-    display: none;
-}
-.error__password-log{
-    display: none;
-}
-
-.error__password,
-.error__repeat-password,
-.error__checkbox,
-.error__username,
-.error__password-log {
-    color: red;
+.error {
+    max-width: 490px;
+    color: rgb(255, 0, 0);
+    font-size: 14px;
+    display: block;
 }

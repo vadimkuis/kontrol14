@@ -6,134 +6,150 @@ window.onload = function () {
     const passwordInput = document.getElementById('password');
     const repeatPasswordInput = document.getElementById('repeat-password');
     const checkboxInput = document.getElementById('checkbox');
+    const signUpButton = document.getElementById('btn');
     const buttonOk = document.getElementById('btn-ok');
     const modal = document.getElementById('modal');
     const switchLink = document.getElementById('switchLink');
-    const signUpButton = document.getElementById('btn');
-    const inputs = document.getElementsByClassName('home__form-input');
     const form = document.getElementById('add__form');
     const homeText = document.getElementById('home__text');
 
+    //2. может содержать только буквы и пробел
+    const REG_FULLNAME = /[0-9.,^:;'"@#$%&*()_=!?<>/~№+}{\-]/;
 
-    // Full Name может содержать только буквы и пробел
-    const fullName = /[.,^:;'"@#$%&*()=!?<>/~`0-9+]/;
-    fullNameInput.oninput = function () {
-        this.value = this.value.replace(fullName, '');
-    }
+    //3. только буквы, цифры, символ подчеркивания и тире
+    const REG_USERNAME = /[.,^:;'"@#$%&*()=!?<>/~`+\s]/;
 
-    // Your username - может содержать только буквы, цифры, символ подчеркивания и тире
-    const userName = /[.,^:;'"@#$%&*()=!?<>/~`+\s]/;
-    userNameInput.oninput = function () {
-        this.value = this.value.replace(userName, '');
-    }
+    //4. реализовать проверку введенного E-mail на корректность
+    const REG_EMAIL = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
 
-    //Реализовать проверку введенного E-mail на корректность
-    const emailRegex = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
-    emailInput.oninput = function () {
-        if (!emailRegex.test(this.value)) {
+    //5. не менее 8 символов, должен содержать хотя бы одну большую букву, цифру и спецсимвол
+    const REG_PASSWORD = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
 
-        }
-    }
-
-    // выводим изменение значения чекбокса
-    checkboxInput.onclick = () => {
-        checkboxInput.checked ? console.log('Cогласен') : console.log('Не согласен');
-    }
-
-    // проверяем заполнение полей
-    for (let i = 0; i < inputs.length; i++) {
-        inputs[i].onchange = function () {
-            this.previousElementSibling.removeAttribute('style');
-        }
-    }
-    form.onsubmit = onRegister;
-    switchLink.onclick = changeLocation;
-
-    function onRegister(ev) {
-        ev.preventDefault();
-
-        let formIsValid = true;
+    checkboxInput.addEventListener('change', function () {
+        console.log(this.checked ? 'Согласен' : 'Не согласен');
+    });
 
 
-        for (let i = 0; i < inputs.length; i++) {
+    function validationForm() {
+        let error = false;
 
-            if (!inputs[i].value && formIsValid) {
-                inputs[i].previousElementSibling.style.color = 'red';
-                alert('Заполните поле ' + inputs[i].previousElementSibling.innerText);
-                formIsValid = false;
-            }
+        //2. может содержать только буквы и пробел const REG_FULLNAME
+        if (!fullNameInput.value || fullNameInput.value.match(REG_FULLNAME)) {
+            fullNameInput.style.borderBottom = "2px solid #FF0000FF";
+            fullNameInput.nextElementSibling.classList.remove("d-none");
+            fullNameInput.nextElementSibling.classList.add("error");
+            error = true;
+        } else {
+            fullNameInput.style.borderBottom = "1px solid #C6C6C4";
+            fullNameInput.nextElementSibling.classList.remove("error");
+            fullNameInput.nextElementSibling.classList.add("d-none");
         }
 
-        function showError(inputElement, message) {
-            inputElement.style.border = '1px solid red';
-            inputElement.style.marginBottom = '10px';
-            inputElement.nextElementSibling.textContent = message;
-            inputElement.nextElementSibling.style.display = 'block';
+        // 3. только буквы, цифры, символ подчеркивания и тире const REG_USERNAME
+        if (!userNameInput.value || userNameInput.value.match(REG_USERNAME)) {
+            userNameInput.style.borderBottom = "2px solid #FF0000FF";
+            userNameInput.nextElementSibling.classList.remove("d-none");
+            userNameInput.nextElementSibling.classList.add("error");
+            error = true;
+        } else {
+            userNameInput.style.borderBottom = "1px solid #C6C6C4";
+            userNameInput.nextElementSibling.classList.remove("error");
+            userNameInput.nextElementSibling.classList.add("d-none");
         }
 
-        if (formIsValid && additionalChecks()) {
-            modal.setAttribute('style', 'display: block');
+        //4. реализовать проверку введенного E-mail на корректность const REG_EMAIL
+        if (!emailInput.value.match(REG_EMAIL)) {
+            emailInput.style.borderBottom = "2px solid #FF0000FF";
+            emailInput.nextElementSibling.classList.remove("d-none");
+            emailInput.nextElementSibling.classList.add("error");
+            error = true;
+        } else {
+            emailInput.style.borderBottom = "1px solid #C6C6C4";
+            emailInput.nextElementSibling.classList.remove("error");
+            emailInput.nextElementSibling.classList.add("d-none");
         }
-        let person = {
-            fullName: fullNameInput.value.trim(),
-            userName: userNameInput.value.trim(),
-            email: emailInput.value.trim(),
-            password: passwordInput.value.trim()
-        };
-        const clients = JSON.parse(localStorage.getItem('clients')) || [];
-        clients.push(person);
-        localStorage.setItem('clients', JSON.stringify(clients));
-    };
 
-    function additionalChecks() {
+        //5. не менее 8 символов, должен содержать хотя бы одну большую букву, цифру и спецсимвол const REG_PASSWORD
         if (passwordInput.value.length < 8) {
-            showError(passwordInput, 'Поле может содержать минимум 8 символов');
-            return false;
+            passwordInput.style.borderBottom = "2px solid #FF0000FF";
+            passwordInput.nextElementSibling.classList.remove("d-none");
+            passwordInput.nextElementSibling.classList.add("error");
+            error = true;
+        } else if (passwordInput.value.match(REG_PASSWORD)) {
+            passwordInput.style.borderBottom = "1px solid #C6C6C4";
+            passwordInput.nextElementSibling.classList.remove("error");
+            passwordInput.nextElementSibling.classList.add("d-none");
         }
-        //Поле пароля должно содержать минимум 8 символов, среди которых есть:
-        //- хотя бы одна буква в верхнем регистре
-        const passwordRegex1 = /[A-Z]/;
-        //- хотя бы одна цифра
-        const passwordRegex2 = /[0-9]/;
-        //- хотя бы один спецсимвол
-        const passwordRegex3 = /[.,^:;'"@#$%&*()=!?<>/~`]/;
 
-        errorPassword.setAttribute('style', 'display: none');
-        errorRepeatPassword.setAttribute('style', 'display: none');
-
-        if (passwordRegex1.test(passwordInput.value)) {
-
-        } else {
-            errorPassword.setAttribute('style', 'display: block');
-            return false;
-        }
-        if (passwordRegex2.test(passwordInput.value)) {
-        } else {
-            errorPassword.setAttribute('style', 'display: block');
-            return false;
-        }
-        if (passwordRegex3.test(passwordInput.value)) {
-
-        } else {
-            errorPassword.setAttribute('style', 'display: block');
-            return false;
-        }
-        if (!repeatPasswordInput.value) {
-            alert('Подтвердите пароль');
-            return false;
-        }
+        //6. Password и Repeat Password должны совпадать
         if (passwordInput.value !== repeatPasswordInput.value) {
-            errorRepeatPassword.setAttribute('style', 'display: block');
-            return false;
+            repeatPasswordInput.style.borderBottom = "2px solid #FF0000FF";
+            repeatPasswordInput.nextElementSibling.classList.remove("d-none");
+            repeatPasswordInput.nextElementSibling.classList.add("error");
+            error = true;
+        } else {
+            repeatPasswordInput.style.borderBottom = "1px solid #C6C6C4";
+            repeatPasswordInput.nextElementSibling.classList.remove("error");
+            repeatPasswordInput.nextElementSibling.classList.add("d-none");
+            //Это добавляем чтобы не было ошибки и в поле, где вводится пароль
+            passwordInput.style.borderBottom = "1px solid #C6C6C4";
+            passwordInput.nextElementSibling.classList.remove("error");
+            passwordInput.nextElementSibling.classList.add("d-none");
         }
+
+        let errCheckbox = document.getElementById('error-check');
+
         if (!checkboxInput.checked) {
-            errorCheckbox.setAttribute('style', 'display: block');
-            return false;
+            errCheckbox.classList.remove("d-none");
+            errCheckbox.classList.add("error");
+            error = true;
+        } else {
+            errCheckbox.classList.remove("error");
+            errCheckbox.classList.add("d-none");
         }
-        return true;
+
+        if (error) {
+            console.log('Ошибка');
+        } else {
+            console.log('Ошибок нет');
+            let userData = {
+                name: fullNameInput.value,
+                username: userNameInput.value,
+                email: emailInput.value,
+                password: passwordInput.value,
+            }
+
+            addToLocalStorage();
+
+        }
     }
+
+    function addToLocalStorage() {
+        const userData = {
+            name: fullNameInput.value,
+            username: userNameInput.value,
+            email: emailInput.value,
+            password: passwordInput.value,
+        }
+
+        let clients = localStorage.getItem('clients');
+        if (clients) {
+            let clientsArray = JSON.parse(clients);
+            clientsArray.push(userData);
+            localStorage.setItem('clients', JSON.stringify(clientsArray));
+        } else {
+            let clientsArray = [];
+            clientsArray.push(userData);
+            localStorage.setItem('clients', JSON.stringify(clientsArray))
+        }
+        console.log(localStorage);
+        modal.setAttribute('style', 'display: block');
+    }
+
+    signUpButton.addEventListener('click', validationForm);
 
     buttonOk.onclick = changeLocation;
+    switchLink.onclick = changeLocation;
 
 
     function changeLocation() {
@@ -152,40 +168,49 @@ window.onload = function () {
         switchLink.textContent = 'Registration'; // замена текста
 
         //Перезагрузка страницы
-        switchLink.onclick = location.reload;
+        //switchLink.onclick = location.reload;
 
         // Добавляем обработчик события для кнопки Sign In
-        form.onsubmit = onLogin;
+        //form.onsubmit = onLogin;
+        signUpButton.addEventListener('click', onLogin);
     }
 
     function onLogin(event) {
         event.preventDefault();
         form.reset();
 
-        errorUsername.setAttribute('style', 'display: none');
-        errorPasswordLog.setAttribute('style', 'display: none');
-
         let username = userNameInput.value.trim();
         let password = passwordInput.value.trim();
 
         // Проверяем заполнены ли оба поля
         if (!username) {
-            errorUsername.setAttribute('style', 'display: block');
+            userNameInput.style.borderBottom = "2px solid #FF0000FF";
+            userNameInput.nextElementSibling.classList.remove("d-none");
+            userNameInput.nextElementSibling.classList.add("error");
+        } else {
+            userNameInput.style.borderBottom = "1px solid #C6C6C4";
+            userNameInput.nextElementSibling.classList.remove("error");
+            userNameInput.nextElementSibling.classList.add("d-none");
         }
         if (!password) {
-            errorPasswordLog.setAttribute('style', 'display: block');
+            passwordInput.nextElementSibling.classList.remove("d-none");
+            passwordInput.nextElementSibling.classList.add("error");
+        } else {
+            passwordInput.style.borderBottom = "1px solid #C6C6C4";
+            passwordInput.nextElementSibling.classList.remove("error");
+            passwordInput.nextElementSibling.classList.add("d-none");
         }
-
+        let clientsArray = localStorage.setItem('clients', JSON.stringify(clientsArray));
         if (username && password) {
-            const user = clients.find(person => person.userName === username);
+            const user = clients.find(userData => userData.userName === username);
             if (user.length === 0) {
                 alert('Такой пользователь не зарегистрирован!');
             } else {
-                const user = person.find(person => person.password === password);
+                const user = userData.find(userData => userData.password === password);
                 if (!user) {
                     alert('Неверный пароль!');
                 } else {
-                    form.onsubmit = goToPersonalPage;
+                    signUpButton.addEventListener('click', goToPersonalPage);
                 }
             }
 
@@ -204,17 +229,9 @@ window.onload = function () {
             switchLink.remove();
             homeText.previousElementSibling.remove()
             homeText.remove();
-
-            form.onsubmit = onAutorization;
         }
 
-
-        function onAutorization() {
-            location.reload();
-        }
-
-    };
+    }
 }
 
 
-  
