@@ -167,17 +167,10 @@ window.onload = function () {
         signUpButton.textContent = 'Sign In'; // изменяем текст кнопки
         switchLink.textContent = 'Registration'; // замена текста
 
-        //Перезагрузка страницы
-        //switchLink.onclick = location.reload;
-
-        // Добавляем обработчик события для кнопки Sign In
-        //form.onsubmit = onLogin;
         signUpButton.addEventListener('click', onLogin);
     }
 
-    function onLogin(event) {
-        event.preventDefault();
-        form.reset();
+    function onLogin() {
 
         let username = userNameInput.value.trim();
         let password = passwordInput.value.trim();
@@ -200,37 +193,36 @@ window.onload = function () {
             passwordInput.nextElementSibling.classList.remove("error");
             passwordInput.nextElementSibling.classList.add("d-none");
         }
-        let clientsArray = localStorage.setItem('clients', JSON.stringify(clientsArray));
+        let clients = JSON.parse(localStorage.getItem('clients'));
+        console.log(clients);
+
         if (username && password) {
-            const user = clients.find(userData => userData.userName === username);
-            if (user.length === 0) {
+            const user = clients.find(userData => userData.username === username);
+            if (!user.password === password) {
+
                 alert('Такой пользователь не зарегистрирован!');
             } else {
-                const user = userData.find(userData => userData.password === password);
-                if (!user) {
-                    alert('Неверный пароль!');
-                } else {
-                    signUpButton.addEventListener('click', goToPersonalPage);
-                }
+                // const user = clients.find(userData => userData.password === password);
+                // if (!user) {
+                //     alert('Неверный пароль!');
+                // } else {
+                //     signUpButton.addEventListener('click', goToPersonalPage);
+                // }
+
+                document.getElementById('title').textContent = `Welcome, ${username} !`;
+                signUpButton.textContent = 'Exit'; // изменяем текст кнопки
+                userNameInput.previousElementSibling.remove()
+                userNameInput.remove(); // удаляем блок с полем User Name
+                passwordInput.previousElementSibling.remove()
+                passwordInput.remove(); // удаляем блок с полем Repeat Password
+                switchLink.previousElementSibling.remove()
+                switchLink.remove();
+                homeText.previousElementSibling.remove()
+                homeText.remove();
+
             }
 
         }
-
-        function goToPersonalPage() {
-            form.reset();
-
-            document.querySelector('h1').textContent = `Welcome, ${user.fullName}`; // изменяем текст заголовка
-            signUpButton.textContent = 'Exit'; // изменяем текст кнопки
-            userNameInput.previousElementSibling.remove()
-            userNameInput.remove(); // удаляем блок с полем User Name
-            passwordInput.previousElementSibling.remove()
-            passwordInput.remove(); // удаляем блок с полем Repeat Password
-            switchLink.previousElementSibling.remove()
-            switchLink.remove();
-            homeText.previousElementSibling.remove()
-            homeText.remove();
-        }
-
     }
 }
 
