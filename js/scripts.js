@@ -35,9 +35,6 @@ window.onload = function () {
 
         //2. может содержать только буквы и пробел const REG_FULLNAME
         if (!fullNameInput.value || fullNameInput.value.match(REG_FULLNAME)) {
-            fullNameInput.style.borderBottom = "2px solid #FF0000FF";
-            fullNameInput.nextElementSibling.classList.remove("d-none");
-            fullNameInput.nextElementSibling.classList.add("error");
             error = true;
         } else {
             fullNameInput.style.borderBottom = "1px solid #C6C6C4";
@@ -59,9 +56,6 @@ window.onload = function () {
 
         //4. реализовать проверку введенного E-mail на корректность const REG_EMAIL
         if (!emailInput.value.match(REG_EMAIL)) {
-            emailInput.style.borderBottom = "2px solid #FF0000FF";
-            emailInput.nextElementSibling.classList.remove("d-none");
-            emailInput.nextElementSibling.classList.add("error");
             error = true;
         } else {
             emailInput.style.borderBottom = "1px solid #C6C6C4";
@@ -83,9 +77,6 @@ window.onload = function () {
 
         //6. Password и Repeat Password должны совпадать
         if (passwordInput.value !== repeatPasswordInput.value) {
-            repeatPasswordInput.style.borderBottom = "2px solid #FF0000FF";
-            repeatPasswordInput.nextElementSibling.classList.remove("d-none");
-            repeatPasswordInput.nextElementSibling.classList.add("error");
             error = true;
         } else {
             repeatPasswordInput.style.borderBottom = "1px solid #C6C6C4";
@@ -100,8 +91,6 @@ window.onload = function () {
         let errCheckbox = document.getElementById('error-check');
 
         if (!checkboxInput.checked) {
-            errCheckbox.classList.remove("d-none");
-            errCheckbox.classList.add("error");
             error = true;
         } else {
             errCheckbox.classList.remove("error");
@@ -132,17 +121,9 @@ window.onload = function () {
             password: passwordInput.value,
         }
 
-        let clients = localStorage.getItem('clients');
-        if (clients) {
-            let clientsArray = JSON.parse(clients);
-            clientsArray.push(userData);
-            localStorage.setItem('clients', JSON.stringify(clientsArray));
-        } else {
-            let clientsArray = [];
-            clientsArray.push(userData);
-            localStorage.setItem('clients', JSON.stringify(clientsArray))
-        }
-        console.log(localStorage);
+        const clients = JSON.parse(localStorage.getItem('clients')) || [];
+        clients.push(userData);
+        localStorage.setItem('clients', JSON.stringify(clients));
         modal.setAttribute('style', 'display: block');
     }
 
@@ -198,7 +179,7 @@ window.onload = function () {
 
         if (username && password) {
             const user = clients.find(userData => userData.username === username);
-            if (!user.password === password) {
+            if (user.password !== password) {
 
                 alert('Такой пользователь не зарегистрирован!');
             } else {
@@ -215,7 +196,7 @@ window.onload = function () {
                 userNameInput.remove(); // удаляем блок с полем User Name
                 passwordInput.previousElementSibling.remove()
                 passwordInput.remove(); // удаляем блок с полем Repeat Password
-                switchLink.previousElementSibling.remove()
+                //switchLink.previousElementSibling.remove()
                 switchLink.remove();
                 homeText.previousElementSibling.remove()
                 homeText.remove();
