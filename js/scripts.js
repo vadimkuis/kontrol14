@@ -12,6 +12,8 @@ window.onload = function () {
     const switchLink = document.getElementById('switchLink');
     const form = document.getElementById('add__form');
     const homeText = document.getElementById('home__text');
+    let errCheckbox = document.getElementById('error-check');
+    const inputs = document.getElementsByClassName('home__form-input');
 
     //2. может содержать только буквы и пробел
     const REG_FULLNAME = /[0-9.,^:;'"@#$%&*()_=!?<>/~№+}{\-]/;
@@ -29,38 +31,42 @@ window.onload = function () {
         console.log(this.checked ? 'Согласен' : 'Не согласен');
     });
 
+    function hideErrorInputs() {
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].style.borderBottom = "1px solid #C6C6C4";
+            inputs[i].nextElementSibling.classList.remove("error");
+            inputs[i].nextElementSibling.classList.add("d-none");
+        }
+    }
+
+    signUpButton.addEventListener('click', validationForm);
 
     function validationForm() {
+        hideErrorInputs();
+
         let error = false;
 
         //2. может содержать только буквы и пробел const REG_FULLNAME
         if (!fullNameInput.value || fullNameInput.value.match(REG_FULLNAME)) {
+            fullNameInput.style.borderBottom = "2px solid #FF0000FF";
+            fullNameInput.nextElementSibling.classList.remove("d-none");
+            fullNameInput.nextElementSibling.classList.add("error");
             error = true;
-        } else {
-            fullNameInput.style.borderBottom = "1px solid #C6C6C4";
-            fullNameInput.nextElementSibling.classList.remove("error");
-            fullNameInput.nextElementSibling.classList.add("d-none");
         }
-
         // 3. только буквы, цифры, символ подчеркивания и тире const REG_USERNAME
         if (!userNameInput.value || userNameInput.value.match(REG_USERNAME)) {
             userNameInput.style.borderBottom = "2px solid #FF0000FF";
             userNameInput.nextElementSibling.classList.remove("d-none");
             userNameInput.nextElementSibling.classList.add("error");
             error = true;
-        } else {
-            userNameInput.style.borderBottom = "1px solid #C6C6C4";
-            userNameInput.nextElementSibling.classList.remove("error");
-            userNameInput.nextElementSibling.classList.add("d-none");
         }
 
         //4. реализовать проверку введенного E-mail на корректность const REG_EMAIL
         if (!emailInput.value.match(REG_EMAIL)) {
+            emailInput.style.borderBottom = "2px solid #FF0000FF";
+            emailInput.nextElementSibling.classList.remove("d-none");
+            emailInput.nextElementSibling.classList.add("error");
             error = true;
-        } else {
-            emailInput.style.borderBottom = "1px solid #C6C6C4";
-            emailInput.nextElementSibling.classList.remove("error");
-            emailInput.nextElementSibling.classList.add("d-none");
         }
 
         //5. не менее 8 символов, должен содержать хотя бы одну большую букву, цифру и спецсимвол const REG_PASSWORD
@@ -69,65 +75,46 @@ window.onload = function () {
             passwordInput.nextElementSibling.classList.remove("d-none");
             passwordInput.nextElementSibling.classList.add("error");
             error = true;
-        } else if (passwordInput.value.match(REG_PASSWORD)) {
-            passwordInput.style.borderBottom = "1px solid #C6C6C4";
-            passwordInput.nextElementSibling.classList.remove("error");
-            passwordInput.nextElementSibling.classList.add("d-none");
         }
-
         //6. Password и Repeat Password должны совпадать
         if (passwordInput.value !== repeatPasswordInput.value) {
+            repeatPasswordInput.style.borderBottom = "2px solid #FF0000FF";
+            repeatPasswordInput.nextElementSibling.classList.remove("d-none");
+            repeatPasswordInput.nextElementSibling.classList.add("error");
             error = true;
-        } else {
-            repeatPasswordInput.style.borderBottom = "1px solid #C6C6C4";
-            repeatPasswordInput.nextElementSibling.classList.remove("error");
-            repeatPasswordInput.nextElementSibling.classList.add("d-none");
-            //Это добавляем чтобы не было ошибки и в поле, где вводится пароль
-            passwordInput.style.borderBottom = "1px solid #C6C6C4";
-            passwordInput.nextElementSibling.classList.remove("error");
-            passwordInput.nextElementSibling.classList.add("d-none");
         }
 
-        let errCheckbox = document.getElementById('error-check');
-
         if (!checkboxInput.checked) {
+            checkboxInput.style.borderBottom = "2px solid #FF0000FF";
+            checkboxInput.nextElementSibling.classList.remove("d-none");
+            checkboxInput.nextElementSibling.classList.add("error");
             error = true;
         } else {
-            errCheckbox.classList.remove("error");
-            errCheckbox.classList.add("d-none");
+            checkboxInput.style.borderBottom = "1px solid #C6C6C4";
+            checkboxInput.nextElementSibling.classList.remove("error");
+            checkboxInput.nextElementSibling.classList.add("d-none");
         }
 
         if (error) {
-            console.log('Ошибка');
-        } else {
-            console.log('Ошибок нет');
-            let userData = {
-                name: fullNameInput.value,
-                username: userNameInput.value,
-                email: emailInput.value,
-                password: passwordInput.value,
-            }
-
-            addToLocalStorage();
-
+            return;
         }
-    }
-
-    function addToLocalStorage() {
-        const userData = {
+        console.log('Ошибок нет');
+        let userData = {
             name: fullNameInput.value,
             username: userNameInput.value,
             email: emailInput.value,
             password: passwordInput.value,
-        }
+        };
 
-        const clients = JSON.parse(localStorage.getItem('clients')) || [];
-        clients.push(userData);
-        localStorage.setItem('clients', JSON.stringify(clients));
+        addToLocalStorage(userData);
         modal.setAttribute('style', 'display: block');
     }
 
-    signUpButton.addEventListener('click', validationForm);
+    function addToLocalStorage(user) {
+        const clients = JSON.parse(localStorage.getItem('clients')) || [];
+        clients.push(user);
+        localStorage.setItem('clients', JSON.stringify(clients));
+    }
 
     buttonOk.onclick = changeLocation;
     switchLink.onclick = changeLocation;
@@ -147,63 +134,59 @@ window.onload = function () {
         checkboxInput.parentElement.remove(); // удаляем блок с чекбоксом
         signUpButton.textContent = 'Sign In'; // изменяем текст кнопки
         switchLink.textContent = 'Registration'; // замена текста
-
+        signUpButton.removeEventListener('click', validationForm);
         signUpButton.addEventListener('click', onLogin);
+        switchLink.addEventListener('click', function () {
+            location.reload();
+        });
+
     }
 
     function onLogin() {
 
-        let username = userNameInput.value.trim();
-        let password = passwordInput.value.trim();
+        const username = userNameInput.value.trim();
+        const password = passwordInput.value.trim();
+        hideErrorInputs();
 
         // Проверяем заполнены ли оба поля
         if (!username) {
             userNameInput.style.borderBottom = "2px solid #FF0000FF";
             userNameInput.nextElementSibling.classList.remove("d-none");
             userNameInput.nextElementSibling.classList.add("error");
-        } else {
-            userNameInput.style.borderBottom = "1px solid #C6C6C4";
-            userNameInput.nextElementSibling.classList.remove("error");
-            userNameInput.nextElementSibling.classList.add("d-none");
         }
         if (!password) {
             passwordInput.nextElementSibling.classList.remove("d-none");
             passwordInput.nextElementSibling.classList.add("error");
-        } else {
-            passwordInput.style.borderBottom = "1px solid #C6C6C4";
-            passwordInput.nextElementSibling.classList.remove("error");
-            passwordInput.nextElementSibling.classList.add("d-none");
         }
-        let clients = JSON.parse(localStorage.getItem('clients'));
-        console.log(clients);
+        const clients = JSON.parse(localStorage.getItem('clients'));
 
         if (username && password) {
             const user = clients.find(userData => userData.username === username);
             if (user.password !== password) {
-
                 alert('Такой пользователь не зарегистрирован!');
-            } else {
-                // const user = clients.find(userData => userData.password === password);
-                // if (!user) {
-                //     alert('Неверный пароль!');
-                // } else {
-                //     signUpButton.addEventListener('click', goToPersonalPage);
-                // }
-
-                document.getElementById('title').textContent = `Welcome, ${username} !`;
-                signUpButton.textContent = 'Exit'; // изменяем текст кнопки
-                userNameInput.previousElementSibling.remove()
-                userNameInput.remove(); // удаляем блок с полем User Name
-                passwordInput.previousElementSibling.remove()
-                passwordInput.remove(); // удаляем блок с полем Repeat Password
-                //switchLink.previousElementSibling.remove()
-                switchLink.remove();
-                homeText.previousElementSibling.remove()
-                homeText.remove();
-
+            }else{
+                goToPersonalPage();
             }
-
         }
+
+
+    }
+
+    function goToPersonalPage() {
+        signUpButton.removeEventListener('click', onLogin);
+        document.querySelector('h1').textContent = `Welcome, ${user.name} !`; // изменяем текст заголовка
+        signUpButton.textContent = 'Exit'; // изменяем текст кнопки
+        userNameInput.previousElementSibling.remove()
+        userNameInput.remove(); // удаляем блок с полем User Name
+        passwordInput.previousElementSibling.remove()
+        passwordInput.remove(); // удаляем блок с полем Repeat Password
+        homeText.previousElementSibling.remove()
+        homeText.remove();
+        switchLink.remove();
+
+        signUpButton.addEventListener('click', function () {
+            location.reload();
+        });
     }
 }
 
