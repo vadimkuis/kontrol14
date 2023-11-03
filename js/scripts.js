@@ -12,7 +12,6 @@ window.onload = function () {
     const switchLink = document.getElementById('switchLink');
     const form = document.getElementById('add__form');
     const homeText = document.getElementById('home__text');
-    let errCheckbox = document.getElementById('error-check');
     const inputs = document.getElementsByClassName('home__form-input');
 
     //2. может содержать только буквы и пробел
@@ -24,12 +23,24 @@ window.onload = function () {
     //4. реализовать проверку введенного E-mail на корректность
     const REG_EMAIL = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
 
-    //5. не менее 8 символов, должен содержать хотя бы одну большую букву, цифру и спецсимвол
-    const REG_PASSWORD = /^(([^<>()[\].,;:\s@"]+(\.[^<>()[\].,;:\s@"]+)*)|(".+"))@(([^<>()[\].,;:\s@"]+\.)+[^<>()[\].,;:\s@"]{2,})$/iu;
+    //5. содержать хотя бы одну большую букву, цифру и спецсимвол
+    //- хотя бы одна буква в верхнем регистре
+    const passwordRegex1 = /[A-Z]/;
+
+    //- хотя бы одна цифра
+    const passwordRegex2 = /[0-9]/;
+
+    //- хотя бы один спецсимвол
+    const passwordRegex3 = /[.,^:;'"@#$%&*()=!?<>/~`]/;
+
+    const clients = JSON.parse(localStorage.getItem('clients')) || [];
+
 
     checkboxInput.addEventListener('change', function () {
         console.log(this.checked ? 'Согласен' : 'Не согласен');
     });
+
+    const inputElements = [fullNameInput, userNameInput, emailInput, passwordInput, repeatPasswordInput, checkboxInput];
 
     function hideErrorInputs() {
         for (let i = 0; i < inputs.length; i++) {
@@ -39,55 +50,65 @@ window.onload = function () {
         }
     }
 
+    function showEror(inputElement) {
+        inputElement.style.borderBottom = "2px solid #FF0000FF";
+        inputElement.nextElementSibling.classList.remove("d-none");
+        inputElement.nextElementSibling.classList.add("error");
+    }
+
     signUpButton.addEventListener('click', validationForm);
 
-    function validationForm() {
+
+    function validationForm(evt) {
+        evt.preventDefault();
         hideErrorInputs();
 
         let error = false;
 
         //2. может содержать только буквы и пробел const REG_FULLNAME
         if (!fullNameInput.value || fullNameInput.value.match(REG_FULLNAME)) {
-            fullNameInput.style.borderBottom = "2px solid #FF0000FF";
-            fullNameInput.nextElementSibling.classList.remove("d-none");
-            fullNameInput.nextElementSibling.classList.add("error");
+            showEror(fullNameInput);
             error = true;
         }
         // 3. только буквы, цифры, символ подчеркивания и тире const REG_USERNAME
         if (!userNameInput.value || userNameInput.value.match(REG_USERNAME)) {
-            userNameInput.style.borderBottom = "2px solid #FF0000FF";
-            userNameInput.nextElementSibling.classList.remove("d-none");
-            userNameInput.nextElementSibling.classList.add("error");
+            showEror(userNameInput);
             error = true;
         }
 
         //4. реализовать проверку введенного E-mail на корректность const REG_EMAIL
         if (!emailInput.value.match(REG_EMAIL)) {
-            emailInput.style.borderBottom = "2px solid #FF0000FF";
-            emailInput.nextElementSibling.classList.remove("d-none");
-            emailInput.nextElementSibling.classList.add("error");
+            showEror(emailInput);
             error = true;
         }
 
         //5. не менее 8 символов, должен содержать хотя бы одну большую букву, цифру и спецсимвол const REG_PASSWORD
-        if (passwordInput.value.length < 8) {
-            passwordInput.style.borderBottom = "2px solid #FF0000FF";
-            passwordInput.nextElementSibling.classList.remove("d-none");
-            passwordInput.nextElementSibling.classList.add("error");
+        if (passwordInput.value.length <= 8) {
+            showEror(passwordInput);
             error = true;
         }
+
+        if (!passwordRegex1.test(passwordInput.value)) {
+            showEror(passwordInput);
+            error = true;
+        }
+        if (!passwordRegex2.test(passwordInput.value)) {
+            showEror(passwordInput);
+            error = true;
+        }
+        if (!passwordRegex3.test(passwordInput.value)) {
+            showEror(passwordInput);
+            error = true;
+        }
+
         //6. Password и Repeat Password должны совпадать
         if (passwordInput.value !== repeatPasswordInput.value) {
-            repeatPasswordInput.style.borderBottom = "2px solid #FF0000FF";
-            repeatPasswordInput.nextElementSibling.classList.remove("d-none");
-            repeatPasswordInput.nextElementSibling.classList.add("error");
+            showEror(repeatPasswordInput);
             error = true;
         }
 
         if (!checkboxInput.checked) {
-            checkboxInput.style.borderBottom = "2px solid #FF0000FF";
-            checkboxInput.nextElementSibling.classList.remove("d-none");
-            checkboxInput.nextElementSibling.classList.add("error");
+            showEror(checkboxInput);
             error = true;
         } else {
             checkboxInput.style.borderBottom = "1px solid #C6C6C4";
@@ -98,7 +119,6 @@ window.onload = function () {
         if (error) {
             return;
         }
-        console.log('Ошибок нет');
         let userData = {
             name: fullNameInput.value,
             username: userNameInput.value,
@@ -107,11 +127,14 @@ window.onload = function () {
         };
 
         addToLocalStorage(userData);
+        showModal();
+    }
+
+    function showModal() {
         modal.setAttribute('style', 'display: block');
     }
 
     function addToLocalStorage(user) {
-        const clients = JSON.parse(localStorage.getItem('clients')) || [];
         clients.push(user);
         localStorage.setItem('clients', JSON.stringify(clients));
     }
@@ -119,9 +142,13 @@ window.onload = function () {
     buttonOk.onclick = changeLocation;
     switchLink.onclick = changeLocation;
 
+    function removeModal() {
+        modal.removeAttribute('style');
+    }
 
     function changeLocation() {
-        modal.removeAttribute('style');
+        hideErrorInputs();
+        removeModal();
         form.reset();
 
         document.querySelector('h1').textContent = 'Log in to the system'; // изменяем текст заголовка
@@ -136,14 +163,16 @@ window.onload = function () {
         switchLink.textContent = 'Registration'; // замена текста
         signUpButton.removeEventListener('click', validationForm);
         signUpButton.addEventListener('click', onLogin);
-        switchLink.addEventListener('click', function () {
+
+        switchLink.addEventListener('click', function (evt) {
+            evt.preventDefault();
             location.reload();
         });
 
     }
 
-    function onLogin() {
-
+    function onLogin(evt) {
+        evt.preventDefault();
         const username = userNameInput.value.trim();
         const password = passwordInput.value.trim();
         hideErrorInputs();
@@ -158,21 +187,18 @@ window.onload = function () {
             passwordInput.nextElementSibling.classList.remove("d-none");
             passwordInput.nextElementSibling.classList.add("error");
         }
-        const clients = JSON.parse(localStorage.getItem('clients'));
 
         if (username && password) {
             const user = clients.find(userData => userData.username === username);
-            if (user.password !== password) {
+            if (user && user.password == password) {
+                goToPersonalPage(user);
+            } else {
                 alert('Такой пользователь не зарегистрирован!');
-            }else{
-                goToPersonalPage();
             }
         }
-
-
     }
 
-    function goToPersonalPage() {
+    function goToPersonalPage(user) {
         signUpButton.removeEventListener('click', onLogin);
         document.querySelector('h1').textContent = `Welcome, ${user.name} !`; // изменяем текст заголовка
         signUpButton.textContent = 'Exit'; // изменяем текст кнопки
@@ -180,11 +206,11 @@ window.onload = function () {
         userNameInput.remove(); // удаляем блок с полем User Name
         passwordInput.previousElementSibling.remove()
         passwordInput.remove(); // удаляем блок с полем Repeat Password
-        homeText.previousElementSibling.remove()
         homeText.remove();
         switchLink.remove();
 
-        signUpButton.addEventListener('click', function () {
+        signUpButton.addEventListener('click', function (evt) {
+            evt.preventDefault();
             location.reload();
         });
     }
