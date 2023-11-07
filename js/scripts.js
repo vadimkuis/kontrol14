@@ -33,8 +33,7 @@ window.onload = function () {
     //- хотя бы один спецсимвол
     const passwordRegex3 = /[.,^:;'"@#$%&*()=!?<>/~`]/;
 
-    const clients = JSON.parse(localStorage.getItem('clients')) || [];
-
+    const CLIENTS_LS_KEY = 'clients';
 
     checkboxInput.addEventListener('change', function () {
         console.log(this.checked ? 'Согласен' : 'Не согласен');
@@ -135,8 +134,9 @@ window.onload = function () {
     }
 
     function addToLocalStorage(user) {
+        const clients = JSON.parse(localStorage.getItem(CLIENTS_LS_KEY)) || [];
         clients.push(user);
-        localStorage.setItem('clients', JSON.stringify(clients));
+        localStorage.setItem(CLIENTS_LS_KEY, JSON.stringify(clients));
     }
 
     buttonOk.onclick = changeLocation;
@@ -180,15 +180,13 @@ window.onload = function () {
         // Проверяем заполнены ли оба поля
         if (!username) {
             userNameInput.style.borderBottom = "2px solid #FF0000FF";
-            userNameInput.nextElementSibling.classList.remove("d-none");
-            userNameInput.nextElementSibling.classList.add("error");
         }
         if (!password) {
-            passwordInput.nextElementSibling.classList.remove("d-none");
-            passwordInput.nextElementSibling.classList.add("error");
+            passwordInput.style.borderBottom = "2px solid #FF0000FF";
         }
 
         if (username && password) {
+            const clients = JSON.parse(localStorage.getItem(CLIENTS_LS_KEY)) || [];
             const user = clients.find(userData => userData.username === username);
             if (user && user.password == password) {
                 goToPersonalPage(user);
